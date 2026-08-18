@@ -1,0 +1,25 @@
+{
+  "name": "tokenzen-lite",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@11.9.0",
+  "scripts": {
+    "dev:admin": "pnpm --filter @token-zen/admin dev",
+    "dev:portal": "pnpm --filter @token-zen/portal dev",
+    "build": "pnpm --filter @token-zen/shared build && pnpm -r --filter './apps/*' build",
+    "build:admin": "pnpm --filter @token-zen/shared build && pnpm --filter @token-zen/admin build",
+    "build:portal": "pnpm --filter @token-zen/shared build && pnpm --filter @token-zen/portal build",
+    "lint": "pnpm -r lint",
+    "type-check": "pnpm -r type-check"
+  },
+  "engines": {
+    "node": ">=18",
+    "pnpm": ">=8"
+  },
+  "dependencies": {
+    "dompurify": "^3.3.3"
+  },
+  "devDependencies": {
+    "@types/dompurify": "^3.2.0"
+  }
+}

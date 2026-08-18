@@ -1,0 +1,110 @@
+/* ========================================
+   Token Zen Portal — Global Styles
+   Warm Orange Design System
+   ======================================== */
+
+:root {
+  --tz-border-default: #E8E8E2;
+  --tz-bg-page: #FAFAF8;
+  --tz-primary: #ED7B2F;
+  --tz-primary-50: #FFF7F0;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    'PingFang SC', 'Microsoft YaHei', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: var(--tz-bg-page);
+}
+
+#root {
+  min-height: 100vh;
+}
+
+/* Smooth transitions for interactive elements */
+.ant-btn,
+.ant-menu-item,
+.ant-tag,
+.ant-input,
+.ant-select-selector {
+  transition: all 0.15s ease-out !important;
+}
+
+.ant-card {
+  transition: box-shadow 0.2s ease-out, transform 0.15s ease-out !important;
+}
+
+/* Card hover elevation */
+.ant-card:hover {
+  box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Statistic card — more prominent value */
+.ant-statistic .ant-statistic-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ant-statistic-title {
+  font-weight: 500;
+  color: #7A7A72;
+}
+
+/* Light sidebar active state */
+.ant-menu-light .ant-menu-item-selected {
+  font-weight: 500;
+}
+
+/* Page title styling */
+h4.ant-typography {
+  color: #2E2E2C;
+  letter-spacing: 0.01em;
+}
+
+/* Primary button subtle glow on hover */
+.ant-btn-primary:hover {
+  box-shadow: 0 2px 8px rgba(237, 123, 47, 0.35);
+}
+
+/* Alert styling refinements */
+.ant-alert {
+  border-radius: 8px;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.12);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+/* Content area fade-in */
+.ant-layout-content {
+  animation: contentFadeIn 0.25s ease-out;
+}
+
+@keyframes contentFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 模型目录：无启用渠道承载的模型整行置灰 */
+.model-row-unavailable > td {
+  opacity: 0.5;
+}

@@ -1,0 +1,14 @@
+# Token Zen Lite 部署覆盖：用预构建镜像替代根 docker-compose.yml 中的 build: 段。
+# 用途：镜像已在构建机完成构建并导入目标环境时，避免在目标环境现场构建
+# （目标环境 Go 版本不满足要求或外网拉取受限时适用）。
+# 用法：docker compose -p token-zen-lite --env-file .env.docker -f docker-compose.yml -f docker-compose.image.yml up -d
+# 镜像源：示例使用目标环境本机镜像仓库 localhost:5500，按实际环境调整。
+
+services:
+  backend:
+    image: localhost:5500/token-zen-lite/backend:v0.0.1
+    build: !reset null
+
+  web:
+    image: localhost:5500/token-zen-lite/web:v0.0.1
+    build: !reset null

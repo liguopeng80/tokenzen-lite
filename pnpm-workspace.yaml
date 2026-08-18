@@ -1,0 +1,6 @@
+packages:
+  - 'apps/*'
+  - 'packages/*'
+# esbuild 需要执行安装后脚本下载平台二进制；不放行则 vite 构建失败
+allowBuilds:
+  esbuild: true

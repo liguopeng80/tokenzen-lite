@@ -1,0 +1,75 @@
+# Token Zen Lite 单机容器编排。
+# 首次使用：cp .env.docker.example .env.docker && 按注释填写密钥 && docker compose --env-file .env.docker up -d
+# 详见 README.md 的"容器方式安装"。
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: tzl
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?请在 .env.docker 中设置 POSTGRES_PASSWORD}
+      POSTGRES_DB: tzl
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tzl -d tzl"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks: [tzlnet]
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        VERSION: ${TZL_VERSION:-docker}
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      TZL_ENV: prod
+      TZL_DATABASE_URL: postgres://tzl:${POSTGRES_PASSWORD}@db:5432/tzl?sslmode=disable
+      # 只信任本编排网络内的 web 容器转发的来源 IP 头，其余一律以连接地址为准
+      TZL_TRUSTED_PROXIES: ${TZL_NETWORK_SUBNET:-172.28.0.0/16}
+      TZL_SESSION_SECRET: ${TZL_SESSION_SECRET:?请在 .env.docker 中设置 32 位以上的 TZL_SESSION_SECRET}
+      TZL_ENCRYPT_KEY: ${TZL_ENCRYPT_KEY:?请在 .env.docker 中设置 TZL_ENCRYPT_KEY，设定后不可变更}
+      # 本编排默认以明文 HTTP 对外提供服务，故 Secure cookie 默认关闭：
+      # 置 true 会让浏览器拒绝保存会话 cookie，员工登录后立即掉登录态。
+      # 在前面接入 TLS 反向代理后必须改为 true。
+      TZL_SESSION_COOKIE_SECURE: ${TZL_SESSION_COOKIE_SECURE:-false}
+      TZL_ROOT_USERNAME: ${TZL_ROOT_USERNAME:-root}
+      TZL_ROOT_PASSWORD: ${TZL_ROOT_PASSWORD:-}
+      TZL_LOG_LEVEL: ${TZL_LOG_LEVEL:-info}
+      TZL_UPSTREAM_TIMEOUT_SEC: ${TZL_UPSTREAM_TIMEOUT_SEC:-600}
+    volumes:
+      # 数据库备份产物。容器重建不丢；宿主机侧路径可用
+      # docker volume inspect token-zen-lite_backups 查询，异地留存由宿主机备份任务负责。
+      - backups:/backup
+    networks: [tzlnet]
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+    restart: unless-stopped
+    depends_on: [backend]
+    ports:
+      # 用户端 Portal 与 /v1 中继：对外提供服务
+      - "${PORTAL_BIND:-0.0.0.0}:${PORTAL_PORT:-8080}:8080"
+      # 管理端：默认只绑宿主机回环地址，需要远程访问时经 SSH 隧道或外层反向代理，
+      # 并在外层配置来源 IP 白名单（见 deploy/nginx-admin-allowlist.conf.example）
+      - "${ADMIN_BIND:-127.0.0.1}:${ADMIN_PORT:-8081}:8081"
+    networks: [tzlnet]
+
+volumes:
+  pgdata:
+  backups:
+
+networks:
+  tzlnet:
+    ipam:
+      config:
+        - subnet: ${TZL_NETWORK_SUBNET:-172.28.0.0/16}

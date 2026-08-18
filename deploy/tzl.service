@@ -1,0 +1,26 @@
+# Token Zen Lite 后端 systemd 单元
+# 安装：cp tzl.service /etc/systemd/system/ && systemctl daemon-reload && systemctl enable --now tzl
+[Unit]
+Description=Token Zen Lite API Gateway
+After=network-online.target postgresql.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=tzl
+Group=tzl
+ExecStart=/opt/tzl/bin/tzl serve
+EnvironmentFile=/etc/tzl/env
+Restart=on-failure
+RestartSec=3
+# 1.6G 内存的生产机上给 PostgreSQL 与系统留余量
+MemoryMax=512M
+LimitNOFILE=65535
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/tzl
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

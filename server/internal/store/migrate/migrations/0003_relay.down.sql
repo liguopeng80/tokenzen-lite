@@ -1,0 +1,3 @@
+DROP TABLE IF EXISTS usage_logs;
+DROP TABLE IF EXISTS channel_costs;
+DROP TABLE IF EXISTS channels;

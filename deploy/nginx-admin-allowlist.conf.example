@@ -1,0 +1,15 @@
+# 管理端来源 IP 白名单。部署时复制到 /etc/nginx/tokenzen-admin-allowlist.conf
+# 并改成本站实际的运维来源地址，随后 nginx -t && systemctl reload nginx。
+#
+# nginx-tokenzen.conf 的 admin 虚拟主机以 include 引入本文件，紧随其后是
+# `deny all;`：文件不存在时 nginx -t 失败，文件存在但没有任何 allow 规则时
+# 管理端一律拒绝访问。两种情况都不会静默放行。
+#
+# 每条 allow 接受单个 IP 或 CIDR 网段，可写多行：
+
+allow 203.0.113.10;      # 示例：办公固定出口 IP
+allow 198.51.100.0/24;   # 示例：运维跳板机网段
+
+# 确无固定来源 IP（例如运维方只有动态家宽）时，取消下面一行的注释以显式放开。
+# 放开后管理端登录仅剩应用层限流与账号锁定保护，务必同时使用高强度管理员密码。
+# allow all;

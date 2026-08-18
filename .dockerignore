@@ -1,0 +1,11 @@
+.git
+.github
+.scratch
+node_modules
+**/node_modules
+**/dist
+server/tzl
+docs
+.env
+.env.docker
+*.log

@@ -1,0 +1,12 @@
+.env
+.env.docker
+CLAUDE.local.md
+.scratch/
+node_modules/
+dist/
+*.log
+.DS_Store
+*.tsbuildinfo
+
+# 浏览器实机验证的中间产物（页面快照、截图）
+.playwright-mcp/
