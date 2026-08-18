@@ -37,6 +37,26 @@ credit balances.
 - **Department cost attribution.** Flat departments as a cost dimension; usage
   logs and ledger entries snapshot the department at charge time, so reports stay
   stable when users move. Optional monthly budgets with over-budget alerts.
+- **Managed integrations for internal AI services.** Agent platforms and other
+  services that call models on behalf of their own users get independent key
+  management: each consuming service registers as an integration with its own
+  machine tokens — no passwords, no browser sessions, no gateway admin
+  credentials — and drives the admin API to provision its users, issue and
+  revoke their API keys, and grant credits, with idempotency keys on critical
+  writes. Scope isolation is enforced server-side: an integration sees only the
+  users, keys, and usage it created, and anything outside its scope reads as
+  nonexistent; channels, upstream keys, pricing, and system settings are
+  permanently out of reach. Disabling an integration cascades to all of its
+  tokens and users.
+- **Traffic recording for postmortems.** Relayed requests can be recorded in
+  full or by sampling: each request is persisted as a standalone JSON file —
+  complete request body, response body, and the accumulated SSE stream —
+  organized by date and named by request_id, lining up directly with usage logs
+  for postmortems, audit evidence, and replay-sample collection. Off by
+  default; once enabled, a per-myriad sample rate controls coverage, body and
+  stream byte caps mark oversized payloads as truncated without ever affecting
+  forwarding, request bodies can optionally be redacted, and files expire after
+  a retention window (7 days by default).
 - **Admin and portal frontends.** Admin manages channels, model pricing, users,
   credits, departments, usage logs, cost reports, audit records, alerts, and
   settings. Portal gives members balance/usage views, self-managed API keys,
